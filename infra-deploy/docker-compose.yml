@@ -80,3 +80,21 @@ services:
     depends_on:
       - prometheus
     restart: always
+
+  jenkins:
+    # 使用包含内嵌Docker功能的较新LTS版本
+    image: jenkins/jenkins:2.426.3-jdk17
+    container_name: leaf-jenkins
+    user: root
+    ports:
+      - "8083:8080"
+      - "50000:50000"
+    environment:
+      - JAVA_OPTS="-Xmx512m -Xms256m"
+    volumes:
+      - ./data/jenkins:/var/jenkins_home
+      # 挂载宿主机 Maven 配置 (如果您本地有可以覆盖)
+      - ~/.m2:/root/.m2
+      # 挂载宿主机 Docker 守护进程，使 Jenkins 里能执行 docker build/push
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: always
