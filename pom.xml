@@ -34,6 +34,7 @@
         <module>leaf-common</module>
         <module>leaf-service-user</module>
         <module>leaf-gateway</module>
+        <module>leaf-service-order</module>
     </modules>
 
     <!-- 版本依赖管理 -->

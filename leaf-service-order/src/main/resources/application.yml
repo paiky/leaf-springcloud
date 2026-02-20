@@ -1,0 +1,26 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: leaf-service-order
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+      config:
+        server-addr: 127.0.0.1:8848
+        file-extension: yaml
+    openfeign:
+      circuitbreaker:
+        # 开启 OpenFeign 熔断保护开关，与 Sentinel 结合
+        enabled: true
+        group:
+          enabled: true
+    sentinel:
+      transport:
+        dashboard: 127.0.0.1:8080 # Sentinel Dashboard暂时先不配独立服务，如果后续有Dashboard，指向Dashboard端口
+
+  config:
+    import:
+      - optional:nacos:leaf-service-order.yaml?refreshEnabled=true
