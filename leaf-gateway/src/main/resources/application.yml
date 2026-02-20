@@ -1,0 +1,34 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: leaf-gateway
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+      config:
+        server-addr: 127.0.0.1:8848
+        file-extension: yaml
+    # 配置网关路由
+    gateway:
+      discovery:
+        locator:
+          # 开启基于服务发现的路由定位机制
+          enabled: true
+          # 服务名称转换为小写，因为通过服务名访问默认路径是大写
+          lower-case-service-id: true
+        
+      routes:
+        # 手动精确配置用户服务路由
+        - id: leaf-service-user-route
+          uri: lb://leaf-service-user
+          predicates:
+            - Path=/api/user/**
+          filters:
+            # 剥离前缀，即把 /api/user/1 转发给真实的微服务 /user/1
+            - StripPrefix=1
+  config:
+    import:
+      - optional:nacos:leaf-gateway.yaml?refreshEnabled=true
