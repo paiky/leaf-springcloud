@@ -90,7 +90,7 @@ services:
       - "8083:8080"
       - "50000:50000"
     environment:
-      - JAVA_OPTS="-Xmx512m -Xms256m"
+      - JAVA_OPTS=-Xmx512m -Xms256m
     volumes:
       - ./data/jenkins:/var/jenkins_home
       # 挂载宿主机 Maven 配置 (如果您本地有可以覆盖)
