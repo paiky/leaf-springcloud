@@ -20,8 +20,18 @@ spring:
     url: jdbc:mysql://127.0.0.1:3306/leaf_user?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
     username: root
     password: 123123
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      database: 0
 
 mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+rocketmq:
+  name-server: 127.0.0.1:9876
+  consumer:
+    group: leaf-service-user-group

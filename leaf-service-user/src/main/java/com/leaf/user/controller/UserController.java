@@ -15,7 +15,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     public Result<User> getUserById(@PathVariable("id") Long id) {
-        User user = userService.getById(id);
+        User user = userService.getUserWithCache(id);
         if (user != null) {
             // 屏蔽密码返回
             user.setPassword(null);

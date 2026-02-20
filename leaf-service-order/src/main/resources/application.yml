@@ -24,3 +24,8 @@ spring:
   config:
     import:
       - optional:nacos:leaf-service-order.yaml?refreshEnabled=true
+
+rocketmq:
+  name-server: 127.0.0.1:9876
+  producer:
+    group: leaf-service-order-group
