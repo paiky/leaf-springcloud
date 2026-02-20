@@ -62,3 +62,21 @@ services:
       - ./data/rocketmq/broker/logs:/home/rocketmq/logs
       - ./data/rocketmq/broker/store:/home/rocketmq/store
       - ./conf/rocketmq/broker.conf:/home/rocketmq/conf/broker.conf
+
+  prometheus:
+    image: prom/prometheus:v2.45.0
+    container_name: leaf-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./conf/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    restart: always
+
+  grafana:
+    image: grafana/grafana:10.0.3
+    container_name: leaf-grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+    restart: always
