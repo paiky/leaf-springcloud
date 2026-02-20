@@ -32,6 +32,7 @@
     <!-- 模块列表，后续逐渐增加 -->
     <modules>
         <module>leaf-common</module>
+        <module>leaf-service-user</module>
     </modules>
 
     <!-- 版本依赖管理 -->
