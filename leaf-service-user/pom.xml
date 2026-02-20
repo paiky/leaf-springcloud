@@ -36,6 +36,19 @@
             <artifactId>leaf-common</artifactId>
             <version>${project.version}</version>
         </dependency>
+
+        <!-- Database: MySQL Driver -->
+        <dependency>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+        </dependency>
+
+        <!-- Database: MyBatis-Plus -->
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
+            <version>3.5.5</version>
+        </dependency>
     </dependencies>
 
     <build>

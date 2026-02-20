@@ -14,3 +14,14 @@ spring:
   config:
     import:
       - optional:nacos:leaf-service-user.yaml?refreshEnabled=true
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    # 请根据您本地 MySQL 的实际情况修改密码
+    url: jdbc:mysql://127.0.0.1:3306/leaf_user?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+    username: root
+    password: root
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

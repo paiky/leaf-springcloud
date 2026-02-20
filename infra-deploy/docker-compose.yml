@@ -1,26 +1,28 @@
 version: '3.8'
 
 services:
-  mysql:
-    image: mysql:8.0
-    container_name: leaf-mysql
-    ports:
-      - "3306:3306"
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-    volumes:
-      - ./data/mysql:/var/lib/mysql
-    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
-    restart: always
+#  使用windows本地的mysql
+#  mysql:
+#    image: mysql:8.0
+#    container_name: leaf-mysql
+#    ports:
+#      - "3306:3306"
+#    environment:
+#      MYSQL_ROOT_PASSWORD: root
+#    volumes:
+#      - ./data/mysql:/var/lib/mysql
+#    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+#    restart: always
 
-  redis:
-    image: redis:7.0
-    container_name: leaf-redis
-    ports:
-      - "6379:6379"
-    volumes:
-      - ./data/redis:/data
-    restart: always
+# 使用windows本地的redis
+#  redis:
+#    image: redis:7.0
+#    container_name: leaf-redis
+#    ports:
+#      - "6379:6379"
+#    volumes:
+#      - ./data/redis:/data
+#    restart: always
 
   nacos:
     image: nacos/nacos-server:v2.3.0
