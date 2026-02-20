@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: leaf-mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    restart: always
+
+  redis:
+    image: redis:7.0
+    container_name: leaf-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./data/redis:/data
+    restart: always
+
+  nacos:
+    image: nacos/nacos-server:v2.3.0
+    container_name: leaf-nacos
+    environment:
+      - PREFER_HOST_MODE=hostname
+      - MODE=standalone
+      - JVM_XMS=256m
+      - JVM_XMX=256m
+      - JVM_XMN=128m
+    ports:
+      - "8848:8848"
+      - "9848:9848"
+    restart: always
+
+  mqnamesrv:
+    image: apache/rocketmq:5.1.4
+    container_name: leaf-mqnamesrv
+    ports:
+      - "9876:9876"
+    command: sh mqnamesrv
+    restart: always
+
+  mqbroker:
+    image: apache/rocketmq:5.1.4
+    container_name: leaf-mqbroker
+    ports:
+      - "10909:10909"
+      - "10911:10911"
+    environment:
+      - NAMESRV_ADDR=mqnamesrv:9876
+    command: sh mqbroker -c /home/rocketmq/conf/broker.conf
+    depends_on:
+      - mqnamesrv
+    restart: always
+    volumes:
+      - ./data/rocketmq/broker/logs:/home/rocketmq/logs
+      - ./data/rocketmq/broker/store:/home/rocketmq/store
+      - ./conf/rocketmq/broker.conf:/home/rocketmq/conf/broker.conf
