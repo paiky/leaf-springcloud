@@ -55,6 +55,12 @@
             <version>2.3.0</version>
         </dependency>
 
+        <!-- OpenFeign Micrometer Support (Required for Spring Boot 3/Spring Cloud 2023 tracing) -->
+        <dependency>
+            <groupId>io.github.openfeign</groupId>
+            <artifactId>feign-micrometer</artifactId>
+        </dependency>
+
         <!-- Local Common Module -->
         <dependency>
             <groupId>com.leaf</groupId>

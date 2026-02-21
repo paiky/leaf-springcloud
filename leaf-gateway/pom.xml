@@ -11,6 +11,7 @@
 
     <artifactId>leaf-gateway</artifactId>
 
+    <!-- Force IDEA Maven Sync: ensure tracing dependencies from leaf-common are picked up -->
     <dependencies>
         <!-- Spring Cloud Gateway (基于 WebFlux，不能引入 web! ) -->
         <dependency>

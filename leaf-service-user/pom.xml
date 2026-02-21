@@ -11,6 +11,7 @@
 
     <artifactId>leaf-service-user</artifactId>
 
+    <!-- Force IDEA Maven Sync: ensure tracing dependencies from leaf-common are picked up -->
     <dependencies>
         <!-- Spring Boot Web -->
         <dependency>

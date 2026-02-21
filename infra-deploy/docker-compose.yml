@@ -105,5 +105,7 @@ services:
     container_name: leaf-jaeger
     ports:
       - "16686:16686" # Jaeger UI
-      - "9411:9411"   # Zipkin compatible API (for Spring Boot Micrometer Tracing)
+      - "9411:9411"   # Zipkin compatible API
+    environment:
+      - COLLECTOR_ZIPKIN_HOST_PORT=:9411 # 明确开启 Zipkin 收集器端点
     restart: always
