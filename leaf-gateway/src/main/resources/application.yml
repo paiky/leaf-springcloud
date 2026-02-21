@@ -29,6 +29,14 @@ spring:
           filters:
             # 剥离前缀，即把 /api/user/1 转发给真实的微服务 /user/1
             - StripPrefix=1
+        
+        # 手动精确配置订单服务路由
+        - id: leaf-service-order-route
+          uri: lb://leaf-service-order
+          predicates:
+            - Path=/api/order/**
+          filters:
+            - StripPrefix=1
   config:
     import:
       - optional:nacos:leaf-gateway.yaml?refreshEnabled=true
