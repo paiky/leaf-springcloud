@@ -8,5 +8,6 @@ scrape_configs:
     static_configs:
       - targets: 
         # 因为Prometheus在Docker里跑，应用在宿主机IDEA里跑，所以使用 host.docker.internal 访问宿主机
+        - 'host.docker.internal:8080' # leaf-gateway
         - 'host.docker.internal:8081' # leaf-service-user
         - 'host.docker.internal:8082' # leaf-service-order
