@@ -2,6 +2,7 @@ package com.leaf.order.controller;
 
 import com.leaf.common.result.Result;
 import com.leaf.order.feign.UserClient;
+import com.leaf.order.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
@@ -18,28 +19,22 @@ public class OrderController {
 
     private final UserClient userClient;
     private final RocketMQTemplate rocketMQTemplate;
+    private final OrderService orderService; // 注入 OrderService
 
     @GetMapping("/create/{userId}")
     public Result<Object> createOrder(@PathVariable("userId") Long userId) {
-        // 1. 通过 OpenFeign 远程调用 user 服务获取用户信息
-        Result<Object> userResult = userClient.getUserById(userId);
-
-        if (userResult.getCode() != 200) {
-            // 如果返回非200（例如触发了Sentinel熔断），直接提示失败
-            return Result.fail(userResult.getCode(), "Create order failed: " + userResult.getMessage());
-        }
-
-        // 2. 模拟订单创建逻辑
-        String orderInfo = "Order successfully created for user: " + userResult.getData();
         
-        // 3. 发送订单创建MQ消息 (供下游如短信/物流服务消费)
         try {
+            // 通过有 @GlobalTransactional 保护的 Service 统筹调用链路和本地强逻辑
+            String orderInfo = orderService.createOrderWithTx(userId);
+            
+            // 3. 异步发送订单创建MQ消息 (原逻辑保留，此操作不在事务块内强制绑定)
             rocketMQTemplate.convertAndSend("order-created-topic", "New Order for userId: " + userId);
-            log.info("Successfully sent order event to RocketMQ for userId: {}", userId);
+            
+            return Result.success(orderInfo);
         } catch (Exception e) {
-            log.error("Failed to send order event to RocketMQ", e);
+            log.error("[Order Controller] createOrder failed", e);
+            return Result.fail(500, "Transaction Failed and Rolled Back: " + e.getMessage());
         }
-
-        return Result.success(orderInfo);
     }
 }

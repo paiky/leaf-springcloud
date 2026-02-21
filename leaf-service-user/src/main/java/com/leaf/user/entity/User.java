@@ -8,7 +8,7 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-@TableName("user")
+@TableName("t_user")
 public class User implements java.io.Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -17,6 +17,7 @@ public class User implements java.io.Serializable {
     private String username;
     private String password;
     private String email;
+    private java.math.BigDecimal balance;
     private LocalDateTime createTime;
     private LocalDateTime updateTime;
 }

@@ -25,6 +25,18 @@ spring:
     import:
       - optional:nacos:leaf-service-order.yaml?refreshEnabled=true
 
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    # 请根据您本地 MySQL 的实际情况修改密码
+    url: jdbc:mysql://127.0.0.1:3306/leaf_order?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+    username: root
+    password: 123123
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
 rocketmq:
   name-server: 127.0.0.1:9876
   producer:
@@ -51,3 +63,13 @@ management:
 logging:
   file:
     name: logs/${spring.application.name}/app.log
+
+seata:
+  enabled: true
+  application-id: ${spring.application.name}
+  tx-service-group: default_tx_group
+  service:
+    vgroup-mapping:
+      default_tx_group: default
+    grouplist:
+      default: 127.0.0.1:8091

@@ -64,6 +64,12 @@
             <version>2.3.0</version>
         </dependency>
 
+        <!-- Seata Distributed Transaction -->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-seata</artifactId>
+        </dependency>
+
         <!-- Lombok (Explicitly added to resolve IDEA strict compilation issues) -->
         <dependency>
             <groupId>org.projectlombok</groupId>

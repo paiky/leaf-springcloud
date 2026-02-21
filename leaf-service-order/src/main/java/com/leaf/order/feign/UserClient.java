@@ -11,4 +11,8 @@ public interface UserClient {
 
     @GetMapping("/user/{id}")
     Result<Object> getUserById(@PathVariable("id") Long id);
+
+    @org.springframework.web.bind.annotation.PostMapping("/user/deductBalance")
+    Result<String> deductBalance(@org.springframework.web.bind.annotation.RequestParam("userId") Long userId, 
+                                 @org.springframework.web.bind.annotation.RequestParam("amount") java.math.BigDecimal amount);
 }

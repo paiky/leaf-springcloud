@@ -22,4 +22,15 @@ public class UserController {
         }
         return Result.success(user);
     }
+    
+    @PostMapping("/deductBalance")
+    public Result<String> deductBalance(@RequestParam("userId") Long userId, 
+                                        @RequestParam("amount") java.math.BigDecimal amount) {
+        try {
+            userService.deductBalance(userId, amount);
+            return Result.success("Success deducted " + amount + " from user " + userId);
+        } catch (Exception e) {
+            return Result.fail(500, e.getMessage());
+        }
+    }
 }

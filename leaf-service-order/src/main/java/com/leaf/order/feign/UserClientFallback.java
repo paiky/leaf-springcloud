@@ -12,4 +12,9 @@ public class UserClientFallback implements UserClient {
     public Result<Object> getUserById(Long id) {
         return Result.fail(500, "User Service is down or timed out. Triggered by Sentinel Fallback.");
     }
+
+    @Override
+    public Result<String> deductBalance(Long userId, java.math.BigDecimal amount) {
+        return Result.fail(500, "Deduct balance failed due to User Service fallback.");
+    }
 }
