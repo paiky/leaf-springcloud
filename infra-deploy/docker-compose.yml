@@ -99,3 +99,11 @@ services:
     depends_on:
       - loki
     restart: always
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.50
+    container_name: leaf-jaeger
+    ports:
+      - "16686:16686" # Jaeger UI
+      - "9411:9411"   # Zipkin compatible API (for Spring Boot Micrometer Tracing)
+    restart: always

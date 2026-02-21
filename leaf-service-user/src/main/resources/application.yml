@@ -47,6 +47,12 @@ management:
   metrics:
     tags:
       application: ${spring.application.name}
+  tracing:
+    sampling:
+      probability: 1.0 # 100% 采样率，保证开发环境每条调用都被记录
+  zipkin:
+    tracing:
+      endpoint: http://127.0.0.1:9411/api/v2/spans
 
 logging:
   file:
