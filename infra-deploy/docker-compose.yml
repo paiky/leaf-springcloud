@@ -80,3 +80,22 @@ services:
     depends_on:
       - prometheus
     restart: always
+
+  loki:
+    image: grafana/loki:2.9.2
+    container_name: leaf-loki
+    ports:
+      - "3100:3100"
+    restart: always
+
+  promtail:
+    image: grafana/promtail:2.9.2
+    container_name: leaf-promtail
+    volumes:
+      - ./conf/promtail/config.yml:/etc/promtail/config.yml
+      # 将宿主机的项目统一日志目录挂载到 Promtail 容器中
+      - ../logs:/var/log/leaf
+    command: -config.file=/etc/promtail/config.yml
+    depends_on:
+      - loki
+    restart: always

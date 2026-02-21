@@ -44,3 +44,7 @@ management:
   metrics:
     tags:
       application: ${spring.application.name}
+
+logging:
+  file:
+    name: logs/${spring.application.name}/app.log
