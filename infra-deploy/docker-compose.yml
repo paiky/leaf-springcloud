@@ -109,3 +109,13 @@ services:
     environment:
       - COLLECTOR_ZIPKIN_HOST_PORT=:9411 # 明确开启 Zipkin 收集器端点
     restart: always
+
+  seata:
+    image: seataio/seata-server:2.0.0
+    container_name: leaf-seata
+    ports:
+      - "8091:8091" # Seata RPC port
+      - "7091:7091" # Seata console port
+    environment:
+      - SEATA_IP=127.0.0.1 # 强制内机穿透 IP
+    restart: always
