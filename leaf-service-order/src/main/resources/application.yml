@@ -73,3 +73,16 @@ seata:
       default_tx_group: default
     grouplist:
       default: 127.0.0.1:8091
+
+# XXL-JOB Configuration
+xxl:
+  job:
+    admin:
+      addresses: http://127.0.0.1:8088/xxl-job-admin
+    executor:
+      appname: leaf-service-order-executor
+      ip: 
+      port: 9999
+      logpath: ./logs/xxl-job/jobhandler
+      logretentiondays: 30
+    accessToken: default_token
