@@ -14,8 +14,9 @@
 - ⚡️ **前沿架构选型**：全面拥抱 **JDK 21**，底层基于 `Spring Boot 3.2.x` + `Spring Cloud Alibaba 2023`，体验最新虚拟线程与生态特性。
 - 🛡️ **微服务治理闭环**：以 Nacos 为双子星（配置与注册中心），OpenFeign 解决服务间痛点调用，Sentinel 作为流量防卫兵实现接口熔断与降级。
 - 📦 **中间件火力全开**：集成 MySQL8、Redis 以及 RocketMQ 5 消息队列完成异步解耦和错峰流控。
-- 📊 **世界级可观测大屏**：通过 Spring Boot Actuator 暴漏微服务心跳，借由 Prometheus 进行时序拉取，最后由 Grafana 点亮极客级的监控大盘。
-- 🛠️ **DevOps & CI/CD**：内置定制的 `Dockerfile` 与 `Jenkinsfile` 自动化构建脚本，以及本地化的 Docker-compose 一键式环境部署底座。
+- 📊 **世界级可观测大屏**：通过 Prometheus + Grafana 完成 JVM 和 Spring 指标抓取，通过 **Loki + Promtail** 实现分布式日志聚合，通过 **Jaeger** 打通全链路追踪。
+- 💸 **分布式事务与调度**：集成 **Seata (AT模式)** 解决微服务跨库事务数据一致性问题，接入 **XXL-JOB** 构建分布式流式任务调度体系。
+- 🛠️ **DevOps & K8s 云原生部署**：不仅提供本地 Docker Compose 极速基建起航，更包含基于 `Dockerfile` 和 `Jenkinsfile` 的自动化 CI/CD，以及直达 **Kubernetes (K8s)** 的企业级集群运维 YAML 配置与部署方案。
 
 ## 🏗️ 系统架构拓扑
 
@@ -34,10 +35,15 @@ graph TD
     E --> H((RocketMQ))
     H --> |Consume Async| D
     
+    E --> TC([Seata TC Server])
+    D --> TC
+    
+    E -.-> |Job Executor| X([XXL-JOB Admin])
+    
     I[Prometheus] --> |Scrape Metrics| B
-    I --> |Scrape Metrics| D
-    I --> |Scrape Metrics| E
-    J[Grafana] --> |Visualize| I
+    J[Loki / Jaeger] --> |Collect Logs & Traces| B
+    K[Grafana] --> |Visualize Everything| I
+    K --> J
 ```
 
 ## 📂 模块指南及结构
@@ -54,13 +60,13 @@ graph TD
 ## 🚀 极速起航 (Quick Start)
 
 ### 1. 基础环境搭建
-系统根目录下的 `infra-deploy` 目录为您准备了一套完整的 Docker Compose 配置文件：
+系统根目录下的 `infra-deploy` 目录为您准备了一套完整的 Docker Compose 配置文件与 K8s 集群部署脚本：
 ```bash
 cd infra-deploy
-# 在本地直接拉起 Nacos、MySQL、Redis、RocketMQ、Prometheus 与 Grafana
+# 在本地直接拉起 Nacos, MySQL, Redis, RocketMQ, Prometheus, Grafana, Loki, Jaeger, Seata, XXL-JOB 等全套基座
 docker compose up -d
 ```
-> *注：MySQL 脚本已经自动挂载并导入了必要的初始化建库语句设置。*
+> *注：MySQL 脚本已经自动挂载并导入了所有必要的微服务、Seata 和 XXL-JOB 初始化建库语句设置。*
 
 ### 2. 本地项目启动开发
 由于引入了 JDK21，请确保您的 IDE (如 IntelliJ IDEA) 设置 JDK 版本为 21。
@@ -75,24 +81,32 @@ docker compose up -d
 GET http://localhost:8080/api/order/create/1
 ```
 
-### 3. 可视化监控探活
+### 3. 可视化监控探活导航
+启动后，您可以通过以下地址访问我们的云原生监控与管理大盘：
 - **Nacos 控制台**: [http://127.0.0.1:8848/nacos](http://127.0.0.1:8848/nacos) *(nacos/nacos)*
 - **Sentinel Dashboard**: [http://127.0.0.1:8080](http://127.0.0.1:8080) (如果已单独起服务)
-- **Grafana JVM 大盘**: [http://127.0.0.1:3000](http://127.0.0.1:3000) *(admin/admin)*
+- **XXL-JOB 调度中心**: [http://127.0.0.1:8088/xxl-job-admin](http://127.0.0.1:8088/xxl-job-admin) *(admin/123456)*
+- **Jaeger 链路追踪 UI**: [http://127.0.0.1:16686](http://127.0.0.1:16686)
+- **Grafana (聚合 Metrics/Logs)**: [http://127.0.0.1:3000](http://127.0.0.1:3000) *(admin/admin)*
+
+## � 项目开发任务路线图
+为了记录并指引我们的开发学习历程，我们规划详细的演进 Roadmap（正在向集群高可用迈进）：
+> �💡 强烈建议阅读：[Spring Cloud Alibaba 演进与 K8s 部署路线图 (task.md)](./docs/task.md)
 
 ## 💡 技术栈清单 (Tech Stack)
 
 * **语言**: Java >= 21
 * **核心框架**: Spring Boot 3.2.11 / Spring Cloud 2023.0.1
-* **注册/配置中心**: Alibaba Nacos
-* **远程过程调用**: Spring Cloud OpenFeign
-* **服务容错降级**: Alibaba Sentinel
-* **统一流控网关**: Spring Cloud Gateway
-* **持久层与连接池**: MySQL 8 / MyBatis-Plus / HikariCP
-* **缓存层**: Redis (Spring Data Redis)
-* **消息队列中间件**: Apache RocketMQ 5.1.4
-* **系统监控大盘**: Micrometer / Prometheus / Grafana
-* **容器化与流水线**: Docker / Jenkins (Native Pipeline)
+* **注册/配置中心**: Alibaba Nacos 2.3.0
+* **API 网关**: Spring Cloud Gateway
+* **远程过程调用 & 服务降级**: OpenFeign / Alibaba Sentinel
+* **持久层 & 分库中间件**: MySQL 8 / MyBatis-Plus 3.5.5
+* **缓存层**: Redis 7
+* **消息队列**: Apache RocketMQ 5.1.4
+* **分布式事务**: Alibaba Seata 2.0.0 (AT Mode)
+* **分布式任务调度**: XXL-JOB 2.4.1
+* **可观测性 (Metrics/Tracing/Logging)**: Micrometer / Prometheus / Jaeger / Loki+Promtail / Grafana
+* **容器化运维 & CI/CD**: Docker Compose / Kubernetes (K8s) / Jenkins
 
 ## 📌 进阶笔记与避坑指南
 对于 CI/CD 构建部分以及网络抓取排坑史，我们在开发历程中特意总结了一篇专属小册子：
