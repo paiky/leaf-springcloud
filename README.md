@@ -89,6 +89,33 @@ GET http://localhost:8080/api/order/create/1
 - **Jaeger 链路追踪 UI**: [http://127.0.0.1:16686](http://127.0.0.1:16686)
 - **Grafana (聚合 Metrics/Logs)**: [http://127.0.0.1:3000](http://127.0.0.1:3000) *(admin/admin)*
 
+## 💻 云原生部署工作流 (K8s Deployment Workflow)
+本项目从本地修改代码到最终在 Kubernetes 中跑起来，有一套标准的流水线作业机制。对于刚接触 Docker 和 K8s 的新手同学，在本地开发环境可以按以下“三步走”战略完成代码手工热更新：
+
+**Step 1: Maven 编译打包** 
+完成代码修改后，将指定微服务模块（如 user 服务）打包为可拉取的独立 `.jar` 包：
+```bash
+mvn clean package -pl leaf-service-user -am -DskipTests
+```
+
+**Step 2: Docker 打包云原生镜像**
+利用根目录下的 `Dockerfile`，将生成的 Jar 封入 Docker 镜像。因为 K8s YAML 中配置了 `imagePullPolicy: IfNotPresent` 且与 Docker Desktop 共用本地镜像库，所以**本阶段无需将镜像 pushed 到远端庞大的 Registry 中**即可直接用于集群。
+```bash
+docker build -t leaf/leaf-service-user:latest -f Dockerfile --build-arg JAR_FILE=leaf-service-user/target/*.jar .
+```
+
+**Step 3: Kubernetes 发布与滚动更新**
+如果你是第一次发布该微服务，只需直接 Apply YAML 配置图纸：
+```bash
+kubectl apply -f infra-deploy/k8s/leaf-service-user.yaml
+```
+如果是**代码更新**，由于部署版本(latest)未变，我们需要强制 K8s 中的旧 Pod 销毁并拉取新生成的本地镜像。你可以用缩放探测法（快速在本地重启并加载新代码）：
+```bash
+kubectl scale deployment leaf-service-user-deployment --replicas=0
+kubectl scale deployment leaf-service-user-deployment --replicas=1
+```
+*(💡 高阶：这套繁琐的手工三步走，已全部沉淀在根目录下的 [`Jenkinsfile`](./Jenkinsfile) 内，您可通过配置 Jenkins 实现 Push 代码后的全自动化构建和部署！)*
+
 ## � 项目开发任务路线图
 为了记录并指引我们的开发学习历程，我们规划详细的演进 Roadmap（正在向集群高可用迈进）：
 > �💡 强烈建议阅读：[Spring Cloud Alibaba 演进与 K8s 部署路线图 (task.md)](./docs/task.md)
