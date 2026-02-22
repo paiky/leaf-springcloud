@@ -56,3 +56,12 @@ Thumbs.db
 infra-deploy/data/
 infra-deploy/mysql-cluster/master/data/
 infra-deploy/mysql-cluster/slave/data/
+infra-deploy/mysql-cluster/dump.sql
+infra-deploy/redis-cluster/data/
+
+# Application Logs
+logs/
+*.rdb
+*.aof
+*.manifest
+nodes.conf
