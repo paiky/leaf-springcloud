@@ -29,8 +29,8 @@ spec:
           value: "host.docker.internal:8848"
         - name: SPRING_DATASOURCE_URL
           value: "jdbc:mysql://host.docker.internal:3306/leaf_user?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai"
-        - name: SPRING_DATA_REDIS_HOST
-          value: "host.docker.internal"
+        - name: SPRING_DATA_REDIS_CLUSTER_NODES
+          value: "host.docker.internal:6371,host.docker.internal:6372,host.docker.internal:6373,host.docker.internal:6374,host.docker.internal:6375,host.docker.internal:6376"
         - name: ROCKETMQ_NAME_SERVER
           value: "host.docker.internal:9876"
         - name: MANAGEMENT_ZIPKIN_TRACING_ENDPOINT

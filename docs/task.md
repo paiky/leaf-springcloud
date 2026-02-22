@@ -87,5 +87,37 @@
   4. 解决极为致命但经典的“跨环境网络映射”问题（正确运用环境变量解耦与 K8s DNS 解析穿透）。
 
 ---
-**完结留念 (2026/02)**
+**阶段性完结留念 (2026/02)**
 一入微服务深似海，但顺着以上步骤，所有晦涩难懂的技术模块都成了受您指挥的云原生军团！
+
+---
+# 🚀 Chapter 3: High Availability & Clustering (高可用与集群演进)
+
+前面的架构虽全，但底座仍是**单点**。接下来我们将为这些核心基础设施穿上“防弹衣”，打造真正的企业级高可用架构：
+
+## 🚩 Phase 15: Redis 高可用集群 (Redis Cluster / Sentinel)
+- **目标**：解决单节点 Redis 宕机导致的缓存雪崩和单点故障。
+- **动作**：
+  1. 理解 Redis 主从复制、哨兵模式和 Cluster 分片集群的区别与适用场景。
+  2. 使用 Docker Compose 搭建 Redis Cluster。
+  3. 修改 Spring Boot (Lettuce/Jedis) 配置，使其无缝连接并具备感知集群拓扑变化的能力。
+
+## 🚩 Phase 16: MySQL 主从复制与读写分离 (Primary-Replica)
+- **目标**：为了应对高并发下的数据库读瓶颈，将查询压力分担至多个只读节点。
+- **动作**：
+  1. 搭建 MySQL 主从复制架构 (`Master -> Slaves`)。
+  2. （可选）引入 ShardingSphere-JDBC 或 MyBatis-Plus Dynamic Datasource 中间件。
+  3. 修改业务代码验证读写剥离（写主库，读从库）。
+
+## 🚩 Phase 17: RocketMQ 高可用集群 (Dledger / Master-Slave)
+- **目标**：保证消息零丢失和 Broker 宕机时的自动故障转移。
+- **动作**：
+  1. 搭建 RocketMQ 基于 Dledger 的多节点集群（或者多主多从）。
+  2. 调整微服务的 Producer 和 Consumer 连接集群地址池。
+  3. 拔掉一台 Broker 的网线，验证业务的消息收发是否能够实现毫秒级自动切换。
+
+## 🚩 Phase 18: K8s 高阶运维 (Helm & GitOps)
+- **目标**：以声明式代码的方式自动化管理应用的云原生全生命周期。
+- **动作**：
+  1. 引入 Helm Packet Manager 统筹部署几十个微服务的海量 YAML 文件。
+  2. 部署 ArgoCD 搭建 GitOps 自动化流水线。

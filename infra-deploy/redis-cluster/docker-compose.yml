@@ -1,0 +1,119 @@
+version: '3.8'
+
+# Redis 高可用集群 (3主3从) Docker Compose 方案
+# 重点：通过 cluster-announce-ip 解决 Docker NAT 导致的外部应用程序无法访问集群的问题。
+
+x-redis-common: &redis-common
+  image: redis:latest
+  restart: always
+  extra_hosts:
+    - "host.docker.internal:host-gateway"
+
+services:
+  redis-node-1:
+    <<: *redis-common
+    container_name: leaf-redis-node-1
+    command: >
+      redis-server 
+      --cluster-enabled yes 
+      --cluster-config-file nodes.conf 
+      --cluster-node-timeout 5000 
+      --appendonly yes 
+      --cluster-announce-ip host.docker.internal 
+      --cluster-announce-port 6371 
+      --cluster-announce-bus-port 16371
+    ports:
+      - "6371:6379"
+      - "16371:16379"
+    volumes:
+      - ./data/node-1:/data
+
+  redis-node-2:
+    <<: *redis-common
+    container_name: leaf-redis-node-2
+    command: >
+      redis-server 
+      --cluster-enabled yes 
+      --cluster-config-file nodes.conf 
+      --cluster-node-timeout 5000 
+      --appendonly yes 
+      --cluster-announce-ip host.docker.internal 
+      --cluster-announce-port 6372 
+      --cluster-announce-bus-port 16372
+    ports:
+      - "6372:6379"
+      - "16372:16379"
+    volumes:
+      - ./data/node-2:/data
+
+  redis-node-3:
+    <<: *redis-common
+    container_name: leaf-redis-node-3
+    command: >
+      redis-server 
+      --cluster-enabled yes 
+      --cluster-config-file nodes.conf 
+      --cluster-node-timeout 5000 
+      --appendonly yes 
+      --cluster-announce-ip host.docker.internal
+      --cluster-announce-port 6373 
+      --cluster-announce-bus-port 16373
+    ports:
+      - "6373:6379"
+      - "16373:16379"
+    volumes:
+      - ./data/node-3:/data
+
+  redis-node-4:
+    <<: *redis-common
+    container_name: leaf-redis-node-4
+    command: >
+      redis-server 
+      --cluster-enabled yes 
+      --cluster-config-file nodes.conf 
+      --cluster-node-timeout 5000 
+      --appendonly yes 
+      --cluster-announce-ip host.docker.internal
+      --cluster-announce-port 6374 
+      --cluster-announce-bus-port 16374
+    ports:
+      - "6374:6379"
+      - "16374:16379"
+    volumes:
+      - ./data/node-4:/data
+
+  redis-node-5:
+    <<: *redis-common
+    container_name: leaf-redis-node-5
+    command: >
+      redis-server 
+      --cluster-enabled yes 
+      --cluster-config-file nodes.conf 
+      --cluster-node-timeout 5000 
+      --appendonly yes 
+      --cluster-announce-ip host.docker.internal
+      --cluster-announce-port 6375 
+      --cluster-announce-bus-port 16375
+    ports:
+      - "6375:6379"
+      - "16375:16379"
+    volumes:
+      - ./data/node-5:/data
+
+  redis-node-6:
+    <<: *redis-common
+    container_name: leaf-redis-node-6
+    command: >
+      redis-server 
+      --cluster-enabled yes 
+      --cluster-config-file nodes.conf 
+      --cluster-node-timeout 5000 
+      --appendonly yes 
+      --cluster-announce-ip host.docker.internal
+      --cluster-announce-port 6376 
+      --cluster-announce-bus-port 16376
+    ports:
+      - "6376:6379"
+      - "16376:16379"
+    volumes:
+      - ./data/node-6:/data
