@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: leaf-service-user-deployment
+  labels:
+    app: leaf-service-user
+spec:
+  replicas: 1 # 我们先启动 1 个副本探测
+  selector:
+    matchLabels:
+      app: leaf-service-user
+  template:
+    metadata:
+      labels:
+        app: leaf-service-user
+    spec:
+      containers:
+      - name: leaf-service-user
+        # 注意：这里我们使用刚才 Jenkins 或者本地打出来的镜像名
+        image: leaf/leaf-service-user:latest 
+        imagePullPolicy: IfNotPresent # 如果本地有（Docker Desktop 共用本地镜像库），就不去远端拉取！这是关键！
+        ports:
+        - containerPort: 8081
+        env:
+        # K8s 容器内访问宿主机上的其他中间件(MySQL/Nacos等)不能用 127.0.0.1，必须用 host.docker.internal 穿透到宿主机
+        - name: SPRING_CLOUD_NACOS_DISCOVERY_SERVER_ADDR
+          value: "host.docker.internal:8848"
+        - name: SPRING_CLOUD_NACOS_CONFIG_SERVER_ADDR
+          value: "host.docker.internal:8848"
+        - name: SPRING_DATASOURCE_URL
+          value: "jdbc:mysql://host.docker.internal:3306/leaf_user?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai"
+        - name: SPRING_DATA_REDIS_HOST
+          value: "host.docker.internal"
+        - name: ROCKETMQ_NAME_SERVER
+          value: "host.docker.internal:9876"
+        - name: MANAGEMENT_ZIPKIN_TRACING_ENDPOINT
+          value: "http://host.docker.internal:9411/api/v2/spans"
+        - name: SEATA_SERVICE_GROUPLIST_DEFAULT
+          value: "host.docker.internal:8091"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: leaf-service-user-svc
+spec:
+  # NodePort 允许我们从 Windows 宿主机的浏览器直接访问这个 K8s 里的服务
+  type: NodePort 
+  selector:
+    app: leaf-service-user
+  ports:
+    - protocol: TCP
+      port: 8081        # 集群内部其他服务访问的端口
+      targetPort: 8081  # 转发给容器内部的 8081 端口
+      nodePort: 30081   # 暴露在宿主机的物理端口 (范围限制 30000-32767)
