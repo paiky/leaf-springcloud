@@ -37,4 +37,15 @@ public class OrderController {
             return Result.fail(500, "Transaction Failed and Rolled Back: " + e.getMessage());
         }
     }
+
+    @GetMapping("/{id}")
+    public Result<Object> getOrderById(@PathVariable("id") Long id) {
+        // Find order by ID from DB and return it.
+        com.leaf.order.entity.Order order = orderService.getById(id);
+        if (order != null) {
+            return Result.success(order);
+        } else {
+            return Result.fail(404, "Order not found");
+        }
+    }
 }
