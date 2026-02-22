@@ -51,6 +51,13 @@
             <version>3.5.5</version>
         </dependency>
 
+        <!-- Dynamic Datasource for Read/Write Splitting -->
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>dynamic-datasource-spring-boot3-starter</artifactId>
+            <version>4.3.0</version>
+        </dependency>
+
         <!-- Redis Cache -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

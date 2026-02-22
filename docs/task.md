@@ -105,9 +105,9 @@
 ## 🚩 Phase 16: MySQL 主从复制与读写分离 (Primary-Replica)
 - **目标**：为了应对高并发下的数据库读瓶颈，将查询压力分担至多个只读节点。
 - **动作**：
-  1. 搭建 MySQL 主从复制架构 (`Master -> Slaves`)。
-  2. （可选）引入 ShardingSphere-JDBC 或 MyBatis-Plus Dynamic Datasource 中间件。
-  3. 修改业务代码验证读写剥离（写主库，读从库）。
+  1. [x] 搭建 MySQL 主从复制架构 (`Master -> Slaves`)。
+  2. [x] （可选）引入 ShardingSphere-JDBC 或 MyBatis-Plus Dynamic Datasource 中间件。
+  3. [x] 修改业务代码验证读写剥离（写主库，读从库）。
 
 ## 🚩 Phase 17: RocketMQ 高可用集群 (Dledger / Master-Slave)
 - **目标**：保证消息零丢失和 Broker 宕机时的自动故障转移。

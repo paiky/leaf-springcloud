@@ -15,11 +15,19 @@ spring:
     import:
       - optional:nacos:leaf-service-user.yaml?refreshEnabled=true
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    # 请根据您本地 MySQL 的实际情况修改密码
-    url: jdbc:mysql://127.0.0.1:3306/leaf_user?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
-    username: root
-    password: 123123
+    dynamic:
+      primary: master # 默认写主库
+      datasource:
+        master:
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          url: jdbc:mysql://127.0.0.1:3307/leaf_user?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+          username: root
+          password: 123123
+        slave_1:
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          url: jdbc:mysql://127.0.0.1:3308/leaf_user?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+          username: root
+          password: 123123
   data:
     redis:
       cluster:

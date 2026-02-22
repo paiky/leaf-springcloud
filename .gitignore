@@ -54,3 +54,5 @@ Thumbs.db
 
 # Other
 infra-deploy/data/
+infra-deploy/mysql-cluster/master/data/
+infra-deploy/mysql-cluster/slave/data/

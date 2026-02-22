@@ -27,8 +27,10 @@ spec:
           value: "host.docker.internal:8848"
         - name: SPRING_CLOUD_NACOS_CONFIG_SERVER_ADDR
           value: "host.docker.internal:8848"
-        - name: SPRING_DATASOURCE_URL
-          value: "jdbc:mysql://host.docker.internal:3306/leaf_user?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai"
+        - name: SPRING_DATASOURCE_DYNAMIC_DATASOURCE_MASTER_URL
+          value: "jdbc:mysql://host.docker.internal:3307/leaf_user?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai"
+        - name: SPRING_DATASOURCE_DYNAMIC_DATASOURCE_SLAVE_1_URL
+          value: "jdbc:mysql://host.docker.internal:3308/leaf_user?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai"
         - name: SPRING_DATA_REDIS_CLUSTER_NODES
           value: "host.docker.internal:6371,host.docker.internal:6372,host.docker.internal:6373,host.docker.internal:6374,host.docker.internal:6375,host.docker.internal:6376"
         - name: ROCKETMQ_NAME_SERVER

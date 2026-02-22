@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  mysql-master:
+    image: mysql:8.0
+    container_name: leaf-mysql-master
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - ./master/data:/var/lib/mysql
+      # 将导出的数据作为主节点的初始化脚本
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --server-id=1 --log-bin=mysql-bin --binlog_format=ROW
+    restart: always
+
+  mysql-slave:
+    image: mysql:8.0
+    container_name: leaf-mysql-slave
+    ports:
+      - "3308:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - ./slave/data:/var/lib/mysql
+      # 从节点一般不需要初始化脚本，因为后续会主动从主节点拉取同步，但也可预载入加快同步或为了测试直接载入
+      # - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --server-id=2 --log-bin=mysql-bin --relay-log=mysql-relay-bin --binlog_format=ROW --read_only=1
+    depends_on:
+      - mysql-master
+    restart: always
