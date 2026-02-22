@@ -98,9 +98,9 @@
 ## 🚩 Phase 15: Redis 高可用集群 (Redis Cluster / Sentinel)
 - **目标**：解决单节点 Redis 宕机导致的缓存雪崩和单点故障。
 - **动作**：
-  1. 理解 Redis 主从复制、哨兵模式和 Cluster 分片集群的区别与适用场景。
-  2. 使用 Docker Compose 搭建 Redis Cluster。
-  3. 修改 Spring Boot (Lettuce/Jedis) 配置，使其无缝连接并具备感知集群拓扑变化的能力。
+  1. [x] 理解 Redis 主从复制、哨兵模式和 Cluster 分片集群的区别与适用场景。
+  2. [x] 使用 Docker Compose 搭建 Redis Cluster。
+  3. [x] 修改 Spring Boot (Lettuce/Jedis) 配置，使其无缝连接并具备感知集群拓扑变化的能力。
 
 ## 🚩 Phase 16: MySQL 主从复制与读写分离 (Primary-Replica)
 - **目标**：为了应对高并发下的数据库读瓶颈，将查询压力分担至多个只读节点。
