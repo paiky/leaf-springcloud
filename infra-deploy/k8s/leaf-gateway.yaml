@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: leaf-gateway-deployment
+  labels:
+    app: leaf-gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: leaf-gateway
+  template:
+    metadata:
+      labels:
+        app: leaf-gateway
+    spec:
+      containers:
+      - name: leaf-gateway
+        image: leaf/leaf-gateway:latest 
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+        env:
+        - name: SPRING_CLOUD_NACOS_DISCOVERY_SERVER_ADDR
+          value: "host.docker.internal:8848"
+        - name: SPRING_CLOUD_NACOS_CONFIG_SERVER_ADDR
+          value: "host.docker.internal:8848"
+        - name: MANAGEMENT_ZIPKIN_TRACING_ENDPOINT
+          value: "http://host.docker.internal:9411/api/v2/spans"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: leaf-gateway-svc
+spec:
+  type: NodePort 
+  selector:
+    app: leaf-gateway
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+      nodePort: 30080
