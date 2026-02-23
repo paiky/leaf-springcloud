@@ -14,6 +14,15 @@ spring:
   config:
     import:
       - optional:nacos:leaf-service-user.yaml?refreshEnabled=true
+
+  # OAuth2 Resource Server: 从 leaf-auth 的公钥端点验证 JWT
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          # K8s 环境下指向 leaf-auth-svc，本地运行时可换成 127.0.0.1:8083
+          jwk-set-uri: ${SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI:http://127.0.0.1:8083/oauth2/jwks}
+
   datasource:
     dynamic:
       primary: master # 默认写主库

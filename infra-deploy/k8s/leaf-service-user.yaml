@@ -39,6 +39,9 @@ spec:
           value: "http://host.docker.internal:9411/api/v2/spans"
         - name: SEATA_SERVICE_GROUPLIST_DEFAULT
           value: "host.docker.internal:8091"
+        # leaf-auth 在同一 K8s 集群内，通过 ClusterDNS 访问，无需走宿主机
+        - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI
+          value: "http://leaf-auth-svc:8083/oauth2/jwks"
 ---
 apiVersion: v1
 kind: Service
