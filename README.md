@@ -139,7 +139,8 @@ kubectl scale deployment leaf-service-user-deployment --replicas=1
 对于 CI/CD 构建部分、网络抓取排坑史以及高可用集群的原理，我们在开发历程中特意总结了多篇专属小册子：
 > - 详见 [Jenkins 本地/离线环境与踩坑指北 (jenkins_troubleshooting.md)](./docs/jenkins_troubleshooting.md)
 > - 详见 [🚀 RocketMQ DLedger 高可用集群实战与原理剖析 (rocketmq_dledger_tutorial.md)](./docs/rocketmq_dledger_tutorial.md)
-> - 详见 [🐋 Docker 常用绝密兵器谱与命令速查宝典 (docker_cheat_sheet.md)](./docs/docker_cheat_sheet.md)
+> - 详见 [🐋 Docker & K8s 常用绝密兵器谱与命令速查宝典 (docker_cheat_sheet.md)](./docs/docker_cheat_sheet.md)
+> - 详见 [🚀 架构师进阶：微服务是如何扩容的？（单机 vs 容器 vs K8s） (microservice_scaling_guide.md)](./docs/microservice_scaling_guide.md)
 
 ---
 *Created by [Paiky](https://github.com/paiky) together with Antigravity AI Code Assistant.*

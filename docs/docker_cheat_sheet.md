@@ -146,4 +146,17 @@ kubectl logs -f deployment/leaf-service-user-deployment
 kubectl logs deployment/leaf-service-user-deployment | Select-Object -Last 20
 ```
 
+### 4. 探查容器生死和详情 (听诊器)
+最基础但也最常用的，就是查看当前 K8s 里所有的容器组 (Pods) 的健康状态（是否在 Running，是否不停的 Restart 崩溃重启）：
+```bash
+# 查看所有 Pods 的状态
+kubectl get pods
+
+# 如果你看到某个 Pod 状态不是 Running (比如 CrashLoopBackOff 或 ImagePullBackOff)，
+# 想看它到底为什么起不来（比如找不到镜像，或者拉取超时），使用这个命令查看其详细生命周期事件：
+kubectl describe pod [在此处填上 get pods 列表里查出来的具体 Pod 名字]
+
+# 举例: kubectl describe pod leaf-service-user-deployment-6cd95895bb-wdzn5
+```
+
 记住这份兵器谱，遇到排障卡住的时候掏出来看看，容器互联与跨云调度的世界将为你敞开大门！
