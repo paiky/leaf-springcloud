@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: leaf-auth-deployment
+  labels:
+    app: leaf-auth
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: leaf-auth
+  template:
+    metadata:
+      labels:
+        app: leaf-auth
+    spec:
+      containers:
+      - name: leaf-auth
+        image: leaf/leaf-auth:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8083
+        env:
+        - name: SPRING_CLOUD_NACOS_DISCOVERY_SERVER_ADDR
+          value: "host.docker.internal:8848"
+        - name: SPRING_CLOUD_NACOS_CONFIG_SERVER_ADDR
+          value: "host.docker.internal:8848"
+        - name: SPRING_DATA_REDIS_CLUSTER_NODES
+          value: "host.docker.internal:6371,host.docker.internal:6372,host.docker.internal:6373,host.docker.internal:6374,host.docker.internal:6375,host.docker.internal:6376"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: leaf-auth-svc
+spec:
+  type: NodePort
+  selector:
+    app: leaf-auth
+  ports:
+    - protocol: TCP
+      port: 8083
+      targetPort: 8083
+      nodePort: 30083

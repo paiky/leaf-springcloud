@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: leaf-auth
+  cloud:
+    nacos:
+      config:
+        server-addr: ${SPRING_CLOUD_NACOS_CONFIG_SERVER_ADDR:127.0.0.1:8848}
+        file-extension: yml
+        group: DEFAULT_GROUP

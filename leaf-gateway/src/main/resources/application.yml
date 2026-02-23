@@ -21,6 +21,14 @@ spring:
           lower-case-service-id: true
         
       routes:
+        # 认证中心路由
+        - id: leaf-auth-route
+          uri: http://leaf-auth-svc:8083
+          predicates:
+            - Path=/api/auth/**
+          filters:
+            - StripPrefix=2
+
         # 手动精确配置用户服务路由
         - id: leaf-service-user-route
           uri: lb://leaf-service-user
@@ -40,6 +48,12 @@ spring:
   config:
     import:
       - optional:nacos:leaf-gateway.yaml?refreshEnabled=true
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://leaf-auth-svc:8083/oauth2/jwks
 
 management:
   endpoints:
