@@ -119,5 +119,5 @@
 ## 🚩 Phase 18: K8s 高阶运维 (Helm & GitOps)
 - **目标**：以声明式代码的方式自动化管理应用的云原生全生命周期。
 - **动作**：
-  1. 引入 Helm Packet Manager 统筹部署几十个微服务的海量 YAML 文件。
-  2. 部署 ArgoCD 搭建 GitOps 自动化流水线。
+  1. [x] 引入 Helm Packet Manager 统筹部署几十个微服务的海量 YAML 文件。
+  2. [x] 阐述与部署基于 GitOps 的最核心自动化流水线 (ArgoCD)。

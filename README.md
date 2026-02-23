@@ -141,6 +141,7 @@ kubectl scale deployment leaf-service-user-deployment --replicas=1
 > - 详见 [🚀 RocketMQ DLedger 高可用集群实战与原理剖析 (rocketmq_dledger_tutorial.md)](./docs/rocketmq_dledger_tutorial.md)
 > - 详见 [🐋 Docker & K8s 常用绝密兵器谱与命令速查宝典 (docker_cheat_sheet.md)](./docs/docker_cheat_sheet.md)
 > - 详见 [🚀 架构师进阶：微服务是如何扩容的？（单机 vs 容器 vs K8s） (microservice_scaling_guide.md)](./docs/microservice_scaling_guide.md)
+> - 详见 [⛵ 终极云原生兵器：Helm (微服务导弹发射车) 与 GitOps 安装指北 (helm_gitops_tutorial.md)](./docs/helm_gitops_tutorial.md)
 
 ---
 *Created by [Paiky](https://github.com/paiky) together with Antigravity AI Code Assistant.*

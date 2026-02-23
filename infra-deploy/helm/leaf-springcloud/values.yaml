@@ -1,0 +1,27 @@
+global:
+  nacosAddr: "host.docker.internal:8848"
+  redisClusterNodes: "host.docker.internal:6371,host.docker.internal:6372,host.docker.internal:6373,host.docker.internal:6374,host.docker.internal:6375,host.docker.internal:6376"
+  rocketmqNameServer: "host.docker.internal:9876;host.docker.internal:9877"
+
+apps:
+  - name: leaf-service-user
+    image: leaf/leaf-service-user:latest
+    containerPort: 8080
+    nodePort: 30081
+    replicas: 1
+    env:
+      - name: SPRING_DATASOURCE_DYNAMIC_DATASOURCE_MASTER_URL
+        value: "jdbc:mysql://host.docker.internal:3307/leaf_user?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai"
+      - name: SPRING_DATASOURCE_DYNAMIC_DATASOURCE_SLAVE_1_URL
+        value: "jdbc:mysql://host.docker.internal:3308/leaf_user?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai"
+
+  - name: leaf-service-order
+    image: leaf/leaf-service-order:latest
+    containerPort: 8082
+    nodePort: 30080
+    replicas: 1
+    env:
+      - name: SPRING_DATASOURCE_DYNAMIC_DATASOURCE_MASTER_URL
+        value: "jdbc:mysql://host.docker.internal:3307/leaf_order?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai"
+      - name: SPRING_DATASOURCE_DYNAMIC_DATASOURCE_SLAVE_1_URL
+        value: "jdbc:mysql://host.docker.internal:3308/leaf_order?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai"
