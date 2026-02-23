@@ -70,3 +70,15 @@ services:
     restart: always
     extra_hosts:
       - "host.docker.internal:host-gateway"
+
+  rocketmq-dashboard:
+    image: apacherocketmq/rocketmq-dashboard:1.0.0
+    container_name: leaf-rocketmq-dashboard
+    ports:
+      - "8089:8080"
+    environment:
+      - JAVA_OPTS=-Drocketmq.namesrv.addr=rmqnamesrv-cluster-1:9876;rmqnamesrv-cluster-2:9876
+    depends_on:
+      - rmqnamesrv-cluster-1
+      - rmqnamesrv-cluster-2
+    restart: always

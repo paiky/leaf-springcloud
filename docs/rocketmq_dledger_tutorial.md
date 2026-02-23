@@ -118,3 +118,47 @@ curl -s http://localhost:30080/api/order/create/7
 因为你的 Java 微服务发消息前，找 `name-server` 问了路。NameServer 告诉它：“以前的 0 号馆塌了，现在去 1 号馆（新的 Master）。” 于是，流量被平滑、自动地切了过去，**全程不需要人工修改任何一行代码或重启微服务！**
 
 这就是真正的**企业级高可用（High Availability）**！🎉
+
+---
+
+## 📊 4. 如何直观地查看当前谁是老大哥？以及可视化管理页
+
+每次看日志找 `MASTER` 太反人类了！其实在业界，我们拥有非常多可视化观测和管理手段。
+
+### 方式 A：纯命令行 (上帝视角)
+如果你在任何一台能访问到 `NameServer` 的服务器上，RocketMQ 自带了一个非常强大的集群巡检工具。不需要看日志，输入这行命令即可将整个村庄的职位排列清楚：
+```bash
+# 进入任何一个 broker 或 nameserver 容器内
+docker exec -it rmqbroker-n0 sh
+# 使用 mqadmin 查看集群分布表
+sh mqadmin clusterList -n 127.0.0.1:9876
+```
+你将立刻看到一张漂亮的表格信息，明确标出哪个 Broker 的角色 (Role) 是 `MASTER`，谁是 `SLAVE`，一目了然！
+
+### 方式 B：RocketMQ-Dashboard (控制台 UI 面板)
+为了方便刚接触 MQ 的小白玩家，我们已经在你的 `rocketmq-cluster/docker-compose.yml` 里面注入了 Apache 官方的 Web Dashboard 控制台面板！
+在 Docker 启动了 `rocketmq-dashboard` 之后，您可以直接用您的 Windows 浏览器访问：
+👉 `http://localhost:8089`
+
+在网页的上方导航栏中，点击【Cluster / 集群】标签，你可以可视化的看到整个 DLedger 集群的状态、吞吐量，谁是主节点！同时也可以在【Topic / 主题】标签下直观地看到 `order-created-topic` 的分布和消息积压数量。
+
+---
+
+## 📈 5. （进阶）如果硬盘不够了，高可用集群该如何扩容？
+
+您抛出了一个非常优秀且深入的架构设计问题：**“目前三个 MQ 一组（DLedger），但由于 2 个是从节点 (Slave)，它们存放着一模一样的数据备份，那这三台机器加在一起的容量，不还是只有 1 台主节点的存储极限吗？如果要存 100TB 海量淘宝订单，难道要把硬盘加到 100TB？”**
+
+**答案是：横向扩展组 (Scale Out)！**
+
+DLedger 这个基于 Raft 的三人小组，被称为一个 **“Broker 组” (例如组名叫 `RaftNode00`)**。
+当流量和存储达到这一个 3 人村庄的上限时，我们绝对**不会**把这个村庄扩大到 5 人、7 人（因为 Raft 节点越多，大家投票沟通花的时间越长，性能越慢！集群 3 人是黄金配置）。
+
+真正正确的扩容做法是：**新建无数个这样的“3人村庄”！**
+1. 我们再拿 3 台新的服务器，组建第二个 DLedger 小组（起名叫 `RaftNode01`）。
+2. 把这第二个小组，**注册到同一个 NameServer 上**。
+3. 接着再建 `RaftNode02`、`RaftNode03`...
+
+此时，NameServer 里就有了几十个 Master 和上百个 Slave。
+当你的微服务生产了一条新订单消息时，NameServer 里的负载均衡算法 (哈希路由)，会自动决定：“由于现在有 10 个主节点（Master），这条订单分配给 `RaftNode05` 的主节点存，下一条分配给 `RaftNode03` 存！”
+
+这，就是分布式架构里**水平切分**和**无限扩展**的美学！也是为什么 RocketMQ 能够抗住双十一万亿级流量的核心护城河。

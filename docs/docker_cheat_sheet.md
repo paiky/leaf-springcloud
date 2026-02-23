@@ -1,4 +1,4 @@
-# 🐋 Docker 常用绝密兵器谱（速查宝典）
+# 🐋 Docker & K8s 常用绝密兵器谱（速查宝典）
 
 在我们的高可用架构演进中，Docker 和 Docker-Compose 是地基。为了避免指令遗忘，这份手册收录了你以后在排查和运维问题时最常用的绝密命令。
 
@@ -110,4 +110,40 @@ docker system prune
 # (如果你想更绝一点，连同本地未使用过的正常拉取下载的镜像库也删除，极度节省空间，加上 -a 参数：docker system prune -a)
 ```
 
-记住这份兵器谱，遇到排障卡住的时候掏出来看看，容器化的世界将为你敞开大门！
+---
+
+## ☸️ 第五章：Kubernetes (K8s) 避坑与生存指南
+
+当我们将服务从单机 Docker 迁移到云原生 K8s 体系时，有些常识需要被颠覆。
+
+### 1. 为什么“杀不掉”？(Deployment 机制)
+**用户痛点**：在 Docker 里 `stop` 或 `rm` 一个容器，它就没了。但在 K8s 中，如果你敲入 `kubectl delete pod [Pod名字]`，你会发现几秒钟后，**它又神奇地原地复活了，换了个名字继续跑**！
+**原理解释**：在 K8s 里，你并不是直接管理具体的 Pod（容器组）。你给 K8s 下达的指令是 **“我要名为 leaf-service-user 的服务，永远保持 1 个副本 (Replica) 在线！”** （这些指令写在了 YAML 文件中）。所以当你手动删除了 Pod，K8s 会认为：“不好！少了一个！我必须立马重启补上！”
+
+### 2. 正确的 K8s 服务启停姿势？(缩放术)
+既然 K8s 根据副本数来维护存活状态，我们要想完美停掉/重启一个服务，就要去操纵 **副本数 (Replicas)**。
+
+**停掉服务（相当于 docker stop）**：
+把此服务的存活保障阈值设为 0。
+```bash
+kubectl scale deployment leaf-service-user-deployment --replicas=0
+```
+*(此时所有的旧实例都会被平滑销毁，且系统永远不会自动帮你重启)*
+
+**启动/重启服务（相当于 docker start）**：
+再将存活保障阈值拨回 1（如果高并发甚至能拨给 3、5 个，它就会拉起多份负载均衡集群）。
+```bash
+kubectl scale deployment leaf-service-user-deployment --replicas=1
+```
+
+### 3. 查看云端日志 (望远镜)
+在 K8s 里，我们不用关心具体的奇怪乱码 Pod 名字去查日志，K8s 允许你宏观查看某个部署集 (Deployment) 下的流式日志：
+```bash
+# 持续跟踪整个 user 服务的最近日志：
+kubectl logs -f deployment/leaf-service-user-deployment
+
+# 偶尔你只想看倒数十来行，可以结合 PowerShell：
+kubectl logs deployment/leaf-service-user-deployment | Select-Object -Last 20
+```
+
+记住这份兵器谱，遇到排障卡住的时候掏出来看看，容器互联与跨云调度的世界将为你敞开大门！
