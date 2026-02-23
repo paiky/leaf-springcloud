@@ -34,7 +34,7 @@ spec:
         - name: SPRING_DATA_REDIS_CLUSTER_NODES
           value: "host.docker.internal:6371,host.docker.internal:6372,host.docker.internal:6373,host.docker.internal:6374,host.docker.internal:6375,host.docker.internal:6376"
         - name: ROCKETMQ_NAME_SERVER
-          value: "host.docker.internal:9876"
+          value: "host.docker.internal:9876;host.docker.internal:9877"
         - name: MANAGEMENT_ZIPKIN_TRACING_ENDPOINT
           value: "http://host.docker.internal:9411/api/v2/spans"
         - name: SEATA_SERVICE_GROUPLIST_DEFAULT

@@ -29,7 +29,7 @@ spec:
         - name: SPRING_DATASOURCE_URL
           value: "jdbc:mysql://host.docker.internal:3306/leaf_order?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai"
         - name: ROCKETMQ_NAME_SERVER
-          value: "host.docker.internal:9876"
+          value: "host.docker.internal:9876;host.docker.internal:9877"
         - name: MANAGEMENT_ZIPKIN_TRACING_ENDPOINT
           value: "http://host.docker.internal:9411/api/v2/spans"
         - name: SEATA_SERVICE_GROUPLIST_DEFAULT

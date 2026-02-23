@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  rmqnamesrv-cluster-1:
+    image: apache/rocketmq:5.1.4
+    container_name: leaf-rmqnamesrv-cluster-1
+    ports:
+      - "9876:9876"
+    command: sh mqnamesrv
+    restart: always
+
+  rmqnamesrv-cluster-2:
+    image: apache/rocketmq:5.1.4
+    container_name: leaf-rmqnamesrv-cluster-2
+    ports:
+      - "9877:9876"
+    command: sh mqnamesrv
+    restart: always
+
+  rmqbroker-n0:
+    image: apache/rocketmq:5.1.4
+    container_name: rmqbroker-n0
+    ports:
+      - "30911:30911"
+      - "30909:30909"
+    environment:
+      - JAVA_OPT_EXT=-Xms256m -Xmx256m -Xmn128m
+    volumes:
+      - ./conf/broker-n0.conf:/home/rocketmq/rocketmq-5.1.4/conf/broker.conf
+    command: sh mqbroker -c /home/rocketmq/rocketmq-5.1.4/conf/broker.conf
+    depends_on:
+      - rmqnamesrv-cluster-1
+      - rmqnamesrv-cluster-2
+    restart: always
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  rmqbroker-n1:
+    image: apache/rocketmq:5.1.4
+    container_name: rmqbroker-n1
+    ports:
+      - "30921:30921"
+      - "30919:30919"
+    environment:
+      - JAVA_OPT_EXT=-Xms256m -Xmx256m -Xmn128m
+    volumes:
+      - ./conf/broker-n1.conf:/home/rocketmq/rocketmq-5.1.4/conf/broker.conf
+    command: sh mqbroker -c /home/rocketmq/rocketmq-5.1.4/conf/broker.conf
+    depends_on:
+      - rmqnamesrv-cluster-1
+      - rmqnamesrv-cluster-2
+    restart: always
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  rmqbroker-n2:
+    image: apache/rocketmq:5.1.4
+    container_name: rmqbroker-n2
+    ports:
+      - "30931:30931"
+      - "30929:30929"
+    environment:
+      - JAVA_OPT_EXT=-Xms256m -Xmx256m -Xmn128m
+    volumes:
+      - ./conf/broker-n2.conf:/home/rocketmq/rocketmq-5.1.4/conf/broker.conf
+    command: sh mqbroker -c /home/rocketmq/rocketmq-5.1.4/conf/broker.conf
+    depends_on:
+      - rmqnamesrv-cluster-1
+      - rmqnamesrv-cluster-2
+    restart: always
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

@@ -1,4 +1,4 @@
-FROM amazoncorretto:21-alpine
+FROM mcr.microsoft.com/openjdk/jdk:21-ubuntu
 VOLUME /tmp
 ARG JAR_FILE=target/*.jar
 COPY ${JAR_FILE} app.jar

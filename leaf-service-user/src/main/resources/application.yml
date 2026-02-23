@@ -45,7 +45,7 @@ mybatis-plus:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
 rocketmq:
-  name-server: 127.0.0.1:9876
+  name-server: 127.0.0.1:9876;127.0.0.1:9877
   consumer:
     group: leaf-service-user-group
 

@@ -112,9 +112,9 @@
 ## 🚩 Phase 17: RocketMQ 高可用集群 (Dledger / Master-Slave)
 - **目标**：保证消息零丢失和 Broker 宕机时的自动故障转移。
 - **动作**：
-  1. 搭建 RocketMQ 基于 Dledger 的多节点集群（或者多主多从）。
-  2. 调整微服务的 Producer 和 Consumer 连接集群地址池。
-  3. 拔掉一台 Broker 的网线，验证业务的消息收发是否能够实现毫秒级自动切换。
+  1. [x] 搭建 RocketMQ 基于 Dledger 的多节点集群（或者多主多从）。
+  2. [x] 调整微服务的 Producer 和 Consumer 连接集群地址池。
+  3. [x] 拔掉一台 Broker 的网线，验证业务的消息收发是否能够实现毫秒级自动切换。
 
 ## 🚩 Phase 18: K8s 高阶运维 (Helm & GitOps)
 - **目标**：以声明式代码的方式自动化管理应用的云原生全生命周期。
