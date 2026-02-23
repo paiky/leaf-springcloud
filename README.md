@@ -136,8 +136,9 @@ kubectl scale deployment leaf-service-user-deployment --replicas=1
 * **容器化运维 & CI/CD**: Docker Compose / Kubernetes (K8s) / Jenkins
 
 ## 📌 进阶笔记与避坑指南
-对于 CI/CD 构建部分以及网络抓取排坑史，我们在开发历程中特意总结了一篇专属小册子：
-> 详见 [Jenkins 本地/离线环境与踩坑指北 (jenkins_troubleshooting.md)](./docs/jenkins_troubleshooting.md)
+对于 CI/CD 构建部分、网络抓取排坑史以及高可用集群的原理，我们在开发历程中特意总结了多篇专属小册子：
+> - 详见 [Jenkins 本地/离线环境与踩坑指北 (jenkins_troubleshooting.md)](./docs/jenkins_troubleshooting.md)
+> - 详见 [🚀 RocketMQ DLedger 高可用集群实战与原理剖析 (rocketmq_dledger_tutorial.md)](./docs/rocketmq_dledger_tutorial.md)
 
 ---
 *Created by [Paiky](https://github.com/paiky) together with Antigravity AI Code Assistant.*
