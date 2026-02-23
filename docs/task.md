@@ -121,3 +121,28 @@
 - **动作**：
   1. [x] 引入 Helm Packet Manager 统筹部署几十个微服务的海量 YAML 文件。
   2. [x] 阐述与部署基于 GitOps 的最核心自动化流水线 (ArgoCD)。
+
+---
+# 🔐 Chapter 4: Microservice Advanced Security (微服务安全完全体)
+
+## 🚩 Phase 19: 统一认证与鉴权中心 (OAuth2.0 + JWT) ✅
+- **目标**：构建企业级统一安全防线，对整条微服务调用链路进行身份校验闭环。
+- **动作**：
+  1. [x] 搭建独立的 `leaf-auth` 认证中心，集成 Spring Authorization Server，动态生成 RSA 2048 密钥对并签发 JWT。
+  2. [x] 在 `leaf-gateway` 实现全局 JWT Token 校验（`SecurityWebFilterChain`）：无 Token → `401`，有效 Token → 放行路由。修复 `StripPrefix=2` 路由 Bug。
+  3. [x] 在 `leaf-service-order` 添加 `FeignTokenRelayConfig` Feign 拦截器，自动从当前请求上下文提取并透传 `Authorization` Header。
+  4. [x] 在 `leaf-service-user` 接入 OAuth2 Resource Server（`ResourceServerConfig`），验证内部 RPC 的 JWT 合法性。
+  5. [x] 全链路 E2E 验证：无 Token → `401`，携带 Token → 订单创建成功（跨越 Gateway → Order → Feign → User 完整链路）。
+
+## 🚩 Phase 20: 搜索引擎与实时数据管道 (Elasticsearch + Canal) ⬜
+- **目标**：亿级数据毫秒级全文检索，MySQL 数据库变更实时同步到 ES。
+- **动作**：
+  1. [ ] 部署 Elasticsearch 搜索引擎。
+  2. [ ] 引入 Alibaba Canal，伪装成 MySQL 从节点监听 Binlog，变更零延迟同步至 ES。
+  3. [ ] 改造核心微服务接口，体验全文检索与高亮词查找。
+
+## 🚩 Phase 21: Service Mesh 服务网格终极形态 (Istio) ⬜
+- **目标**：将限流熔断和复杂路由从业务代码中彻底剥离，由基础架构层接管。
+- **动作**：
+  1. [ ] 在 K8s 集群中安装 Istio 并启用 Sidecar Envoy 流量代理无感注入。
+  2. [ ] 实操体验金丝雀发布（灰度发布）和基于 Header 的高级流量截断机制。
