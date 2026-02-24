@@ -16,33 +16,37 @@
 - 📦 **中间件火力全开**：集成 MySQL8、Redis 以及 RocketMQ 5 消息队列完成异步解耦和错峰流控。
 - 📊 **世界级可观测大屏**：通过 Prometheus + Grafana 完成 JVM 和 Spring 指标抓取，通过 **Loki + Promtail** 实现分布式日志聚合，通过 **Jaeger** 打通全链路追踪。
 - 💸 **分布式事务与调度**：集成 **Seata (AT模式)** 解决微服务跨库事务数据一致性问题，接入 **XXL-JOB** 构建分布式流式任务调度体系。
+- 🔐 **企业级统一安全防线**：基于 **Spring Authorization Server** 搭建 `leaf-auth` 认证中心，RSA 签发 JWT；网关统一拦截无 Token 请求（401），Feign 调用链自动透传 Token，全链路安全闭环。
 - 🛠️ **DevOps & K8s 云原生部署**：不仅提供本地 Docker Compose 极速基建起航，更包含基于 `Dockerfile` 和 `Jenkinsfile` 的自动化 CI/CD，以及直达 **Kubernetes (K8s)** 的企业级集群运维 YAML 配置与部署方案。
 
 ## 🏗️ 系统架构拓扑
 
 ```mermaid
 graph TD
-    A[User Request] --> B(Leaf-Gateway)
+    A[User Request] --> B(Leaf-Gateway - JWT Filter)
+    B -->|Auth Request| AUTH[Leaf-Auth - OAuth2 Server]
+    AUTH -.->|Issue JWT| A
     B -->|Route & Filter| C{Nacos Service Discovery}
-    C --> D[Leaf-Service-User]
+    C --> D[Leaf-Service-User - Resource Server]
     C --> E[Leaf-Service-Order]
-    
-    D <-.-> |OpenFeign & Sentinel| E
-    
-    D --> F[(MySQL)]
-    D --> G[(Redis)]
-    
-    E --> H((RocketMQ))
-    H --> |Consume Async| D
-    
+
+    E -->|Feign + JWT Relay| D
+    D <-.->|OpenFeign & Sentinel| E
+
+    D --> F[(MySQL Primary-Replica)]
+    D --> G[(Redis Cluster)]
+
+    E --> H((RocketMQ Cluster))
+    H -->|Consume Async| D
+
     E --> TC([Seata TC Server])
     D --> TC
-    
-    E -.-> |Job Executor| X([XXL-JOB Admin])
-    
-    I[Prometheus] --> |Scrape Metrics| B
-    J[Loki / Jaeger] --> |Collect Logs & Traces| B
-    K[Grafana] --> |Visualize Everything| I
+
+    E -.->|Job Executor| X([XXL-JOB Admin])
+
+    I[Prometheus] -->|Scrape Metrics| B
+    J[Loki / Jaeger] -->|Collect Logs & Traces| B
+    K[Grafana] -->|Visualize| I
     K --> J
 ```
 
@@ -53,9 +57,10 @@ graph TD
 | 核心模块名 | 端口 | 模块职责 |
 |---|---|---|
 | **[leaf-common](./leaf-common)** | - | 基础依赖包、统一常量、Result 通用响应体包装器 |
-| **[leaf-gateway](./leaf-gateway)** | `8080` | 集群的统一流量网关，处理请求路由转发与鉴权 |
-| **[leaf-service-user](./leaf-service-user)** | `8081` | 用户域微服务 (包含 MyBatis-Plus 与 Redis 缓存整合实践) |
-| **[leaf-service-order](./leaf-service-order)** | `8082` | 订单域微服务 (验证 OpenFeign RPC 及 RocketMQ 异步投递) |
+| **[leaf-auth](./leaf-auth)** | `8083` | OAuth2 统一认证中心，基于 Spring Authorization Server，RSA 签发 JWT |
+| **[leaf-gateway](./leaf-gateway)** | `8080` | 微服务网关，处理流量路由转发与 JWT 统一鉴权（无 Token → 401） |
+| **[leaf-service-user](./leaf-service-user)** | `8081` | 用户域微服务 (MyBatis-Plus、Redis 缓存、OAuth2 Resource Server) |
+| **[leaf-service-order](./leaf-service-order)** | `8082` | 订单域微服务 (OpenFeign RPC、Feign JWT 透传、RocketMQ、Seata) |
 
 ## 🚀 极速起航 (Quick Start)
 
@@ -71,14 +76,21 @@ docker compose up -d
 ### 2. 本地项目启动开发
 由于引入了 JDK21，请确保您的 IDE (如 IntelliJ IDEA) 设置 JDK 版本为 21。
 按以下次序启动核心主程序：
-1. `GatewayApplication`
-2. `UserApplication`
-3. `OrderApplication`
+1. `AuthApplication`（认证中心，需先于网关启动）
+2. `GatewayApplication`
+3. `UserApplication`
+4. `OrderApplication`
 
-访问测试接口：
-```text
-网关直接访问订单层出单 (自动 RPC 调用的验证)
-GET http://localhost:8080/api/order/create/1
+访问测试接口（所有业务接口都需要 JWT）：
+```bash
+# Step 1: 获取 JWT Access Token
+curl -X POST -u "leaf-gateway:leaf-secret" \
+  http://localhost:8083/oauth2/token \
+  -d "grant_type=client_credentials"
+
+# Step 2: 携带 Token 访问业务接口
+curl -H "Authorization: Bearer <access_token>" \
+  http://localhost:8080/api/order/create/1
 ```
 
 ### 3. 可视化监控探活导航
@@ -126,14 +138,15 @@ kubectl scale deployment leaf-service-user-deployment --replicas=1
 * **核心框架**: Spring Boot 3.2.11 / Spring Cloud 2023.0.1
 * **注册/配置中心**: Alibaba Nacos 2.3.0
 * **API 网关**: Spring Cloud Gateway
+* **统一认证鉴权**: Spring Authorization Server (OAuth2.0 + JWT / RS256)
 * **远程过程调用 & 服务降级**: OpenFeign / Alibaba Sentinel
 * **持久层 & 分库中间件**: MySQL 8 / MyBatis-Plus 3.5.5
-* **缓存层**: Redis 7
-* **消息队列**: Apache RocketMQ 5.1.4
+* **缓存层**: Redis 7 (Cluster 模式)
+* **消息队列**: Apache RocketMQ 5.1.4 (DLedger 集群)
 * **分布式事务**: Alibaba Seata 2.0.0 (AT Mode)
 * **分布式任务调度**: XXL-JOB 2.4.1
 * **可观测性 (Metrics/Tracing/Logging)**: Micrometer / Prometheus / Jaeger / Loki+Promtail / Grafana
-* **容器化运维 & CI/CD**: Docker Compose / Kubernetes (K8s) / Jenkins
+* **容器化运维 & CI/CD**: Docker Compose / Kubernetes (K8s) / Helm + ArgoCD / Jenkins
 
 ## 📌 进阶笔记与避坑指南
 对于 CI/CD 构建部分、网络抓取排坑史以及高可用集群的原理，我们在开发历程中特意总结了多篇专属小册子：
