@@ -146,3 +146,121 @@
 - **动作**：
   1. [ ] 在 K8s 集群中安装 Istio 并启用 Sidecar Envoy 流量代理无感注入。
   2. [ ] 实操体验金丝雀发布（灰度发布）和基于 Header 的高级流量截断机制。
+
+---
+# 🧪 Chapter 5: Engineering Quality & Testing (工程质量与测试体系)
+
+## 🚩 Phase 22: 单元测试与集成测试体系 ⬜
+- **目标**：建立可持续维护的自动化测试基础设施，保障代码质量与回归安全。
+- **动作**：
+  1. [ ] 引入 JUnit 5 + Mockito，为核心业务逻辑 (User/Order Service) 编写单元测试。
+  2. [ ] 引入 Testcontainers，使用真实 MySQL/Redis 容器进行集成测试，告别 Mock 数据库的假象。
+  3. [ ] 集成 JaCoCo 代码覆盖率报告，在 Maven 构建时自动生成覆盖率统计。
+  4. [ ] 建立测试分层规范：Unit → Integration → E2E，明确各层职责边界。
+
+## 🚩 Phase 23: 契约测试 (Contract Testing) ⬜
+- **目标**：确保 Feign 接口消费方与提供方的契约一致性，防止接口变更导致隐性故障。
+- **动作**：
+  1. [ ] 引入 Spring Cloud Contract 或 Pact 框架。
+  2. [ ] 为 `UserClient` Feign 接口编写 Provider/Consumer 双向契约测试。
+  3. [ ] 在 CI 流水线中集成契约验证，接口不兼容变更时自动阻断构建。
+
+---
+# 🚀 Chapter 6: CI/CD & DevOps Pipeline (持续集成与交付流水线)
+
+## 🚩 Phase 24: GitHub Actions CI 流水线 ⬜
+- **目标**：实现代码提交到自动构建、测试、镜像打包的全自动化闭环。
+- **动作**：
+  1. [ ] 编写 `.github/workflows/ci.yml`，实现多模块自动构建与单元测试。
+  2. [ ] PR 触发自动测试，通过后才允许合并。
+  3. [ ] 构建成功后自动打包 Docker 镜像并推送至 GitHub Container Registry (ghcr.io) 或 Docker Hub。
+  4. [ ] 添加构建状态徽章到 README.md。
+
+## 🚩 Phase 25: ArgoCD GitOps 实战落地 ⬜
+- **目标**：从 Phase 18 的理论介绍推进到完整实操，实现 Git 驱动的自动化部署。
+- **动作**：
+  1. [ ] 在 K8s 集群中安装 ArgoCD 并配置 Web UI 访问。
+  2. [ ] 关联 GitHub 仓库，配置 Application 自动同步 `infra-deploy/k8s/` 目录。
+  3. [ ] 演练完整流程：Git Push → ArgoCD 检测变更 → 自动部署 → 健康检查。
+  4. [ ] 实操灰度回滚：模拟故障版本发布，通过 ArgoCD 一键回滚到上一个健康版本。
+
+---
+# 📊 Chapter 7: Deep Observability (可观测性深化)
+
+## 🚩 Phase 26: Grafana 全栈运维大屏 ⬜
+- **目标**：构建生产级监控大屏，一屏掌控全局健康状态，异常秒级告警。
+- **动作**：
+  1. [ ] 设计并导入 Grafana Dashboard：JVM 监控面板（堆内存/GC/线程数）。
+  2. [ ] 构建 API 性能面板（QPS、P99 延迟、错误率）。
+  3. [ ] 添加中间件健康面板：RocketMQ 消费进度、MySQL 主从延迟、Redis Cluster 节点状态。
+  4. [ ] 配置 Prometheus AlertManager 告警规则（CPU > 80%、接口 P99 > 2s、MQ 消费堆积等），对接通知渠道。
+
+## 🚩 Phase 27: OpenTelemetry 统一观测标准 ⬜
+- **目标**：从 Micrometer+Zipkin 升级到 OpenTelemetry，统一 Traces/Metrics/Logs 三大观测信号。
+- **动作**：
+  1. [ ] 引入 OpenTelemetry Java Agent 或 SDK，替换现有 Micrometer Tracing。
+  2. [ ] 配置 OTel Collector 作为统一数据管道，分发至 Jaeger (Traces) + Prometheus (Metrics) + Loki (Logs)。
+  3. [ ] 实现 Trace-Log 关联：在日志中自动注入 TraceID，从 Grafana 一键跳转到对应链路。
+
+---
+# 🛡️ Chapter 8: Production-Grade Security (生产级安全加固)
+
+## 🚩 Phase 28: RBAC 细粒度权限控制 ⬜
+- **目标**：扩展 OAuth2 认证中心，从 client_credentials 升级为完整的用户认证 + 角色权限体系。
+- **动作**：
+  1. [ ] 设计并创建 RBAC 数据库模型：`t_user_account` / `t_role` / `t_permission` / `t_user_role` / `t_role_permission`。
+  2. [ ] 扩展 `leaf-auth`，支持 `authorization_code` 和 `password` 授权模式，JWT Payload 中携带 `authorities` 声明。
+  3. [ ] 在 Resource Server 端实现接口级权限校验：`@PreAuthorize("hasAuthority('user:read')")`。
+  4. [ ] E2E 验证：不同角色用户访问同一接口，返回不同的权限结果（200 / 403）。
+
+## 🚩 Phase 29: API 安全加固 ⬜
+- **目标**：为生产环境 API 穿上多层防弹衣，抵御常见攻击向量。
+- **动作**：
+  1. [ ] 接口幂等性设计：基于 Redis Token 实现防重放机制，避免重复提交。
+  2. [ ] 请求签名验签：对关键接口的请求参数进行 HMAC-SHA256 签名校验。
+  3. [ ] 敏感字段加密：手机号、身份证等字段落库前 AES 加密，查询时解密。
+  4. [ ] 全局安全审计：SQL 注入防护（MyBatis 参数化）、XSS 过滤、CORS 精细化策略。
+
+---
+# 🏗️ Chapter 9: Domain-Driven Design & Architecture Evolution (领域驱动与架构演进)
+
+## 🚩 Phase 30: DDD 领域驱动设计重构 ⬜
+- **目标**：选取 Order 服务作为试点，从贫血模型演进为 DDD 充血模型，体验战术设计精髓。
+- **动作**：
+  1. [ ] 重构 Order 服务目录结构为 DDD 四层架构：`interfaces` → `application` → `domain` → `infrastructure`。
+  2. [ ] 引入聚合根 (Aggregate Root)、值对象 (Value Object)、领域事件 (Domain Event) 概念。
+  3. [ ] 实现仓储模式 (Repository Pattern)，将数据访问逻辑从业务逻辑中解耦。
+  4. [ ] 编写领域事件发布机制（基于 Spring ApplicationEvent 或 RocketMQ），实现跨聚合的最终一致性。
+
+## 🚩 Phase 31: CQRS + Event Sourcing ⬜
+- **目标**：实现读写分离的架构升级，写操作走 Command 侧，读操作走 Query 侧，通过事件总线实现最终一致性。
+- **动作**：
+  1. [ ] 设计 CQRS 架构：Command 端负责业务写入（MySQL），Query 端负责高性能查询（Elasticsearch）。
+  2. [ ] 通过 RocketMQ 领域事件将写操作产生的变更异步同步到 Query 端。
+  3. [ ] 实现 Event Sourcing：核心聚合的状态由事件流重建，支持完整的操作审计与时间旅行查询。
+
+---
+# ☁️ Chapter 10: Cloud-Native Evolution (云原生进阶)
+
+## 🚩 Phase 32: GraalVM Native Image ⬜
+- **目标**：利用 Spring Boot 3 的 AOT 编译能力，将微服务编译为 GraalVM 原生镜像，极致性能优化。
+- **动作**：
+  1. [ ] 配置 GraalVM 环境，在 `pom.xml` 中启用 `native-maven-plugin`。
+  2. [ ] 解决 AOT 编译中的反射注册、动态代理等 Native Image 兼容性问题。
+  3. [ ] 对比验证：JVM 模式 vs Native 模式的启动时间（秒 → 毫秒）和内存占用（降低 ~80%）。
+  4. [ ] 将 Native Image 打包为超轻量 Docker 镜像并部署至 K8s。
+
+## 🚩 Phase 33: 多环境管理 (dev / staging / prod) ⬜
+- **目标**：建立完整的多环境配置体系，实现环境隔离与安全发布。
+- **动作**：
+  1. [ ] 在 Nacos 中创建 `dev` / `staging` / `prod` 命名空间，按环境隔离配置。
+  2. [ ] 使用 K8s ConfigMap + Secret 管理敏感配置（数据库密码、密钥等），结合 Spring Cloud Kubernetes 自动注入。
+  3. [ ] 建立发布规范：dev 自由部署 → staging 冒烟测试 → prod 审批发布，配合 ArgoCD 多环境同步策略。
+
+## 🚩 Phase 34: 云厂商部署实战 ⬜
+- **目标**：将项目从本地 Docker Desktop K8s 部署到真实云环境，体验生产级云原生全流程。
+- **动作**：
+  1. [ ] 选择云厂商（阿里云 ACK / AWS EKS / 腾讯云 TKE），创建托管 K8s 集群。
+  2. [ ] 配置 Ingress Controller + 域名解析 + HTTPS 证书（Let's Encrypt / 云厂商证书管理）。
+  3. [ ] 配置 HPA (Horizontal Pod Autoscaler) 弹性伸缩策略，基于 CPU/内存/自定义指标自动扩缩容。
+  4. [ ] 全链路压测：模拟真实流量洪峰，验证自动扩容 → 流量分发 → 缩容回收的完整弹性能力。

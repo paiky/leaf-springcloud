@@ -87,6 +87,12 @@ leaf-springcloud/                   # 顶层父 POM
 | **Chapter 4**: 安全完全体 | Phase 19 (OAuth2+JWT认证中心) | ✅ 已完成 |
 | **Chapter 4**: 安全完全体 | Phase 20 (Elasticsearch+Canal) | ⬜ 下一步 |
 | **Chapter 4**: 安全完全体 | Phase 21 (Istio Service Mesh) | ⬜ 未来 |
+| **Chapter 5**: 工程质量与测试 | Phase 22-23 (单元/集成测试体系→契约测试) | ⬜ 未来 |
+| **Chapter 6**: CI/CD 流水线 | Phase 24-25 (GitHub Actions→ArgoCD GitOps 实战) | ⬜ 未来 |
+| **Chapter 7**: 可观测性深化 | Phase 26-27 (Grafana 全栈大屏→OpenTelemetry) | ⬜ 未来 |
+| **Chapter 8**: 生产级安全加固 | Phase 28-29 (RBAC 权限控制→API 安全加固) | ⬜ 未来 |
+| **Chapter 9**: 领域驱动演进 | Phase 30-31 (DDD 重构→CQRS + Event Sourcing) | ⬜ 未来 |
+| **Chapter 10**: 云原生进阶 | Phase 32-34 (GraalVM→多环境管理→云厂商部署) | ⬜ 未来 |
 
 ---
 
